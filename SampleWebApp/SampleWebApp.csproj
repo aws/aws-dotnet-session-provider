@@ -79,9 +79,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\AWS.SessionProvider.csproj">
-      <Project>{65dd8109-6da4-46a7-a29e-de712f85010a}</Project>
-      <Name>AWS.SessionProvider</Name>
+    <ProjectReference Include="..\src\AWS.SessionProvider.Net45.csproj">
+      <Project>{c73b3233-cb6f-4fa7-9fff-cc6fd64100c3}</Project>
+      <Name>AWS.SessionProvider.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -1,0 +1,26 @@
+<package>
+  <metadata>
+    <id>AWS.SessionProvider</id>
+    <title>AWS SDK for .NET: SessionProvider</title>
+    <version>3.0.0.0-preview</version>
+    <authors>Amazon Web Services</authors>
+    <description>This contains a session state provider using Amazon DynamoDB.</description>
+    <language>en-US</language>
+    <licenseUrl>http://aws.amazon.com/apache2.0/</licenseUrl>
+    <projectUrl>http://aws.amazon.com/sdkfornet/</projectUrl>
+    <tags>AWS Amazon cloud</tags>
+    <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
+    <dependencies>
+      <dependency id="AWSSDK.Core" version="[3.0.0.2-preview, 3.1-preview)" />
+	  <dependency id="AWSSDK.Core" version="[3.0.0.2-preview, 3.1-preview)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src=".\src\bin\net35\Release v3.5\AWS.SessionProvider.dll" target="lib\net35" />
+    <file src=".\src\bin\net35\Release v3.5\AWS.SessionProvider.pdb" target="lib\net35" />
+    <file src=".\src\bin\net45\Release v4.5\AWS.SessionProvider.dll" target="lib\net45" />
+    <file src=".\src\bin\net45\Release v4.5\AWS.SessionProvider.pdb" target="lib\net45" />
+
+    <file src="aws-sessionprovider-sample.config" target="content" />
+  </files>
+</package>

@@ -3,9 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.SessionProvider", "src\AWS.SessionProvider.csproj", "{65DD8109-6DA4-46A7-A29E-DE712F85010A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.SessionProvider.Net35", "src\AWS.SessionProvider.Net35.csproj", "{65DD8109-6DA4-46A7-A29E-DE712F85010A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApp", "SampleWebApp\SampleWebApp.csproj", "{3B69B216-24F4-4220-978B-DE3DC28E6D9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.SessionProvider.Net45", "src\AWS.SessionProvider.Net45.csproj", "{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9283708F-A3BA-4D04-8801-982C3AAF5E55}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +30,10 @@ Global
 		{3B69B216-24F4-4220-978B-DE3DC28E6D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B69B216-24F4-4220-978B-DE3DC28E6D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B69B216-24F4-4220-978B-DE3DC28E6D9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
