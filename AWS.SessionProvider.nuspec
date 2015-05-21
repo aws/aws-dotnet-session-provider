@@ -11,8 +11,7 @@
     <tags>AWS Amazon cloud</tags>
     <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
     <dependencies>
-      <dependency id="AWSSDK.Core" version="[3.0.0.2-preview, 3.1-preview)" />
-	  <dependency id="AWSSDK.Core" version="[3.0.0.2-preview, 3.1-preview)" />
+	  <dependency id="AWSSDK.DynamoDBv2" version="[3.0.0.2-preview, 3.1-preview)" />
     </dependencies>
   </metadata>
   <files>
