@@ -2,6 +2,11 @@
 
 The **Amazon DynamoDB Session State Provider** allows ASP.NET applications store their sessions inside DynamoDB. This helps applications scale across multiple application servers while maintaining session state across the system.
 
+## Change Log
+
+The change log for the can be found in the [CHANGELOG.md](https://github.com/aws/aws-dotnet-session-provider/blob/master/CHANGELOG.md) file.
+
+
 ## Usage Information
 
 This project builds a ASP.NET Session State provider that stores session in a DynamoDB table. The session state provider can retrieved from [NuGet][nuget-package].
