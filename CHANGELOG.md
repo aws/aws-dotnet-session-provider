@@ -1,3 +1,6 @@
+### 3.1.0.2 (2015-10-14)
+* Accept pull request 2 which fixes issues with DeleteExpiredSessions utility method.
+
 ### 3.1.0.1 (2015-08-05)
 * Fix issue with ReleaseItemExclusive not doing a consistent read
 * Add logging
