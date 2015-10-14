@@ -739,19 +739,19 @@ namespace Amazon.SessionProvider
             config.Select = SelectValues.SpecificAttributes;
             config.Filter = filter;
 
-            DocumentBatchWrite batchWrite = table.CreateBatchWrite();
             Search search = table.Scan(config);
 
             do
             {
+                DocumentBatchWrite batchWrite = table.CreateBatchWrite();
                 List<Document> page = search.GetNextSet();
                 foreach (var document in page)
                 {
                     batchWrite.AddItemToDelete(document);
                 }
+                
+                batchWrite.Execute();
             } while (!search.IsDone);
-
-            batchWrite.Execute();
         }
 
         /// <summary>
