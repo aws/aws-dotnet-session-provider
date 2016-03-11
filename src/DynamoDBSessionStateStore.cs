@@ -501,7 +501,7 @@ namespace Amazon.SessionProvider
                     if (session.Contains(ATTRIBUTE_FLAGS))
                         actionFlags = (SessionStateActions)((int)session[ATTRIBUTE_FLAGS]);
 
-                    if (session[ATTRIBUTE_LOCK_DATE] != null)
+                    if (session.Contains(ATTRIBUTE_LOCK_DATE) && session[ATTRIBUTE_LOCK_DATE] != null)
                     {
                         DateTime lockDate = (DateTime)session[ATTRIBUTE_LOCK_DATE];
                         lockAge = DateTime.Now.Subtract(lockDate);
