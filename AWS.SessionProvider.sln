@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.SessionProvider.Net35", "src\AWS.SessionProvider.Net35.csproj", "{65DD8109-6DA4-46A7-A29E-DE712F85010A}"
 EndProject
@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{928370
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.SessionProvider.Test", "test\AWS.SessionProvider.Test.csproj", "{2418CFD0-AC81-4425-9CDC-9CAF450A9855}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,10 @@ Global
 		{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C73B3233-CB6F-4FA7-9FFF-CC6FD64100C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2418CFD0-AC81-4425-9CDC-9CAF450A9855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2418CFD0-AC81-4425-9CDC-9CAF450A9855}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2418CFD0-AC81-4425-9CDC-9CAF450A9855}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2418CFD0-AC81-4425-9CDC-9CAF450A9855}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
