@@ -1,3 +1,6 @@
+### 3.1.0.3 (2016-03-18)
+* Fix issue with the reading of ATTRIBUTE_LOCK_DATE attribute
+
 ### 3.1.0.2 (2015-10-14)
 * Accept pull request 2 which fixes issues with DeleteExpiredSessions utility method.
 
