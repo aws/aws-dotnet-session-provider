@@ -51,6 +51,8 @@ namespace Amazon.SessionProvider
     ///          AWSProfilesLocation=".aws/credentials"
     ///          Region="us-east-1"
     ///          Table="ASP.NET_SessionState"
+    ///          TTLAttributeName="ExpirationTime"
+    ///          TTLExpiredSessionsSeconds="86400"
     ///          /&gt;
     ///   &lt;/providers&gt;
     /// &lt;/sessionState&gt;
@@ -108,6 +110,14 @@ namespace Amazon.SessionProvider
     ///         <term>StrictDisableSession</term>
     ///         <description>Optional boolean attribute. If EnabledSessionState is False globally or on an individual page/view/controller, ASP.NET will still send a keepalive request to dynamo. Setting this to true disables keepalive requests when EnableSessionState is False. Default is false.</description>
     ///     </item>
+    ///     <item>
+    ///         <term>TTLAttributeName</term>
+    ///         <description>Optional string attribute. The name of the TTL attribute for the table. This must be specified for session items to contain TTL-compatible data.</description>
+    ///     </item>
+    ///     <item>
+    ///         <term>TTLExpiredSessionsSeconds</term>
+    ///         <description>Optional int attribute. The minimum number of seconds after session expiration before sessions are eligible for TTL. By default this is 0. This value must be non-negative.</description>
+    ///     </item>
     /// </list>
     /// </para>
     /// </summary>
@@ -144,6 +154,8 @@ namespace Amazon.SessionProvider
         public const string CONFIG_INITIAL_WRITE_UNITS = "WriteCapacityUnits";
         public const string CONFIG_CREATE_TABLE_IF_NOT_EXIST = "CreateIfNotExist";
         public const string CONFIG_STRICT_DISABLE_SESSION = "StrictDisableSession";
+        public const string CONFIG_TTL_ATTRIBUTE = "TTLAttributeName";
+        public const string CONFIG_TTL_EXPIRED_SESSIONS_SECONDS = "TTLExpiredSessionsSeconds";
 
         // This is not const because we will use whatever is the hash key defined for 
         // the table as long as it is a string.
@@ -174,6 +186,8 @@ namespace Amazon.SessionProvider
         int _initialWriteUnits = 5;
         bool _createIfNotExist = true;
         bool _strictDisableSession = false;
+        uint _ttlExtraSeconds = 0;
+        string _ttlAttributeName = null;
 
         IAmazonDynamoDB _ddbClient;
         Table _table;
@@ -284,7 +298,8 @@ namespace Amazon.SessionProvider
         {
             try
             {
-                this._table = Table.LoadTable(this._ddbClient, this._tableName, DynamoDBEntryConversion.V1);
+                var tableConfig = CreateTableConfig();
+                this._table = Table.LoadTable(this._ddbClient, tableConfig);
             }
             catch (ResourceNotFoundException) { }
 
@@ -338,6 +353,16 @@ namespace Amazon.SessionProvider
             if (!string.IsNullOrEmpty(config[CONFIG_STRICT_DISABLE_SESSION]))
             {
                 this._strictDisableSession = bool.Parse(config[CONFIG_STRICT_DISABLE_SESSION]);
+            }
+
+            if (!string.IsNullOrEmpty(config[CONFIG_TTL_ATTRIBUTE]))
+            {
+                this._ttlAttributeName = config[CONFIG_TTL_ATTRIBUTE];
+            }
+
+            if (!string.IsNullOrEmpty(config[CONFIG_TTL_EXPIRED_SESSIONS_SECONDS]))
+            {
+                this._ttlExtraSeconds = uint.Parse(config[CONFIG_TTL_EXPIRED_SESSIONS_SECONDS]);
             }
 
             string applicationName = System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath;
@@ -560,16 +585,18 @@ namespace Amazon.SessionProvider
             LogInfo("SetAndReleaseItemExclusive", sessionId, lockId, newItem, context);
 
             string serialized = serialize(item.Items as SessionStateItemCollection);
+            var expiration = DateTime.Now.Add(this._timeout);
 
             Document newValues = new Document();
             newValues[ATTRIBUTE_SESSION_ID] = GetHashKey(sessionId);
             newValues[ATTRIBUTE_LOCKED] = false;
             newValues[ATTRIBUTE_LOCK_ID] = null;
             newValues[ATTRIBUTE_LOCK_DATE] = DateTime.Now;
-            newValues[ATTRIBUTE_EXPIRES] = DateTime.Now.Add(this._timeout);
+            newValues[ATTRIBUTE_EXPIRES] = expiration;
             newValues[ATTRIBUTE_FLAGS] = 0;
             newValues[ATTRIBUTE_SESSION_ITEMS] = serialized;
             newValues[ATTRIBUTE_RECORD_FORMAT_VERSION] = CURRENT_RECORD_FORMAT_VERSION;
+            SetTTLAttribute(newValues, expiration);
 
             if (newItem)
             {
@@ -608,8 +635,10 @@ namespace Amazon.SessionProvider
                 return;
             }
 
+            var expiration = DateTime.Now.Add(this._timeout);
             doc[ATTRIBUTE_LOCKED] = false;
-            doc[ATTRIBUTE_EXPIRES] = DateTime.Now.Add(this._timeout);
+            doc[ATTRIBUTE_EXPIRES] = expiration;
+            SetTTLAttribute(doc, expiration);
 
             Document expected = new Document();
             expected[ATTRIBUTE_LOCK_ID] = lockId.ToString();
@@ -660,13 +689,15 @@ namespace Amazon.SessionProvider
         {
             LogInfo("CreateUninitializedItem", sessionId, timeout, context);
 
+            var expiration = DateTime.Now.Add(this._timeout);
             Document session = new Document();
             session[ATTRIBUTE_SESSION_ID] = GetHashKey(sessionId);
             session[ATTRIBUTE_LOCKED] = false;
             session[ATTRIBUTE_CREATE_DATE] = DateTime.Now;
-            session[ATTRIBUTE_EXPIRES] = DateTime.Now.Add(this._timeout);
+            session[ATTRIBUTE_EXPIRES] = expiration;
             session[ATTRIBUTE_FLAGS] = 1;
             session[ATTRIBUTE_RECORD_FORMAT_VERSION] = CURRENT_RECORD_FORMAT_VERSION;
+            SetTTLAttribute(session, expiration);
             this._table.PutItem(session);
         }
 
@@ -699,10 +730,12 @@ namespace Amazon.SessionProvider
             if (suppressKeepalive)
                 return;
 
+            var expiration = DateTime.Now.Add(this._timeout);
             Document doc = new Document();
             doc[ATTRIBUTE_SESSION_ID] = GetHashKey(sessionId);
             doc[ATTRIBUTE_LOCKED] = false;
-            doc[ATTRIBUTE_EXPIRES] = DateTime.Now.Add(this._timeout);
+            doc[ATTRIBUTE_EXPIRES] = expiration;
+            SetTTLAttribute(doc, expiration);
             this._table.UpdateItem(doc);
         }
 
@@ -728,7 +761,8 @@ namespace Amazon.SessionProvider
         public static void DeleteExpiredSessions(IAmazonDynamoDB dbClient, string tableName)
         {
             LogInfo("DeleteExpiredSessions");
-            Table table = Table.LoadTable(dbClient, tableName, DynamoDBEntryConversion.V1);
+            var tableConfig = CreateTableConfig(tableName);
+            Table table = Table.LoadTable(dbClient, tableConfig);
 
 
             ScanFilter filter = new ScanFilter();
@@ -823,8 +857,39 @@ namespace Amazon.SessionProvider
                     isActive = true;
             }
 
-            Table table = Table.LoadTable(this._ddbClient, this._tableName, DynamoDBEntryConversion.V1);
+            if (!string.IsNullOrEmpty(this._ttlAttributeName))
+            {
+                this._ddbClient.UpdateTimeToLive(new UpdateTimeToLiveRequest
+                {
+                    TableName = this._tableName,
+                    TimeToLiveSpecification = new TimeToLiveSpecification
+                    {
+                        AttributeName = this._ttlAttributeName,
+                        Enabled = true
+                    }
+                });
+            }
+
+            var tableConfig = CreateTableConfig();
+            Table table = Table.LoadTable(this._ddbClient, tableConfig);
             return table;
+        }
+        private TableConfig CreateTableConfig()
+        {
+            var tableConfig = CreateTableConfig(this._tableName);
+            if (!string.IsNullOrEmpty(this._ttlAttributeName))
+            {
+                tableConfig.StoreAsEpoch.Add(this._ttlAttributeName);
+            }
+            return tableConfig;
+        }
+        private static TableConfig CreateTableConfig(string tableName)
+        {
+            var tableConfig = new TableConfig(tableName)
+            {
+                Conversion = DynamoDBEntryConversion.V1
+            };
+            return tableConfig;
         }
 
         /// <summary>
@@ -843,6 +908,12 @@ namespace Amazon.SessionProvider
                 throw new AmazonDynamoDBException(string.Format("Table {0} cannot be used to store session data because it contains a range key in its schema.", this._tableName));
 
             ATTRIBUTE_SESSION_ID = hashKey;
+        }
+
+        private void SetTTLAttribute(Document doc, DateTime expiration)
+        {
+            if (!string.IsNullOrEmpty(this._ttlAttributeName))
+                doc[this._ttlAttributeName] = expiration.AddSeconds(_ttlExtraSeconds);
         }
 
         private void deleteItem(string sessionId)
