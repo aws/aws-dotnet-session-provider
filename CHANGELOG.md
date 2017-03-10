@@ -1,3 +1,6 @@
+### 3.3.0.0 (2017-03-10)
+* Added DynamoDB Time-to-Live support.
+
 ### 3.1.0.3 (2016-03-18)
 * Fix issue with the reading of ATTRIBUTE_LOCK_DATE attribute
 
