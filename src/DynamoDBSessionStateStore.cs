@@ -879,7 +879,7 @@ namespace Amazon.SessionProvider
             var tableConfig = CreateTableConfig(this._tableName);
             if (!string.IsNullOrEmpty(this._ttlAttributeName))
             {
-                tableConfig.StoreAsEpoch.Add(this._ttlAttributeName);
+                tableConfig.AttributesToStoreAsEpoch.Add(this._ttlAttributeName);
             }
             return tableConfig;
         }
