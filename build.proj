@@ -1,0 +1,11 @@
+<Project DefaultTargets="build-aws-dotnet-session-provider" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+    </PropertyGroup>
+    <Target Name="build-aws-dotnet-session-provider">
+        <Message Text="Compile the Portable Class Library SDK"/>
+        <MSBuild Projects="AWS.SessionProvider.sln"
+            Targets="Clean;Build" 
+            Properties="Configuration=$(Configuration)" />
+    </Target>
+</Project>
