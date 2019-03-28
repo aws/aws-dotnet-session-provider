@@ -1,0 +1,10 @@
+<Project DefaultTargets="build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+    </PropertyGroup>
+    <Target Name="build">
+        <MSBuild Projects="AWS.SessionProvider.sln"
+            Targets="Clean;Build" 
+            Properties="Configuration=$(Configuration)" />
+    </Target>
+</Project>
