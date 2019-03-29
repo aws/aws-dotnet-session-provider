@@ -2,9 +2,12 @@
     <PropertyGroup>
         <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
     </PropertyGroup>
+    <ItemGroup>
+        <ProjectReferences Include="src\*.*proj" />
+    </ItemGroup>
     <Target Name="build">
-        <MSBuild Projects="AWS.SessionProvider.sln"
-            Targets="Clean;Build" 
+        <MSBuild Projects="@(ProjectReferences)"
+            Targets="Build"
             Properties="Configuration=$(Configuration)" />
     </Target>
 </Project>
