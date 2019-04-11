@@ -103,6 +103,10 @@ namespace Amazon.SessionProvider
     ///         <description>Optional int attribute. The write capacity units if the table is created. The default is 5.</description>
     ///     </item>
     ///     <item>
+    ///         <term>UseOnDemandReadWriteCapacity</term>
+    ///         <description>Optional boolean attribute. UseOnDemandReadWriteCapacity controls whether the table will be created with its read/write capacity set to On-Demand. Default is false.</description>
+    ///     </item>
+    ///     <item>
     ///         <term>CreateIfNotExist</term>
     ///         <description>Optional boolean attribute. CreateIfNotExist controls whether the table will be auto created if it doesn't exist. Default is true.</description>
     ///     </item>
@@ -152,6 +156,7 @@ namespace Amazon.SessionProvider
         public const string CONFIG_SERVICE_URL = "ServiceURL";
         public const string CONFIG_INITIAL_READ_UNITS = "ReadCapacityUnits";
         public const string CONFIG_INITIAL_WRITE_UNITS = "WriteCapacityUnits";
+        public const string CONFIG_ON_DEMAND_READ_WRITE_CAPACITY = "UseOnDemandReadWriteCapacity";
         public const string CONFIG_CREATE_TABLE_IF_NOT_EXIST = "CreateIfNotExist";
         public const string CONFIG_STRICT_DISABLE_SESSION = "StrictDisableSession";
         public const string CONFIG_TTL_ATTRIBUTE = "TTLAttributeName";
@@ -184,6 +189,7 @@ namespace Amazon.SessionProvider
         string _application = "";
         int _initialReadUnits = 10;
         int _initialWriteUnits = 5;
+        bool _useOnDemandReadWriteCapacity = false;
         bool _createIfNotExist = true;
         bool _strictDisableSession = false;
         uint _ttlExtraSeconds = 0;
@@ -348,6 +354,11 @@ namespace Amazon.SessionProvider
             if (!string.IsNullOrEmpty(config[CONFIG_INITIAL_WRITE_UNITS]))
             {
                 this._initialWriteUnits = int.Parse(config[CONFIG_INITIAL_WRITE_UNITS]);
+            }
+
+            if (!string.IsNullOrEmpty(config[CONFIG_ON_DEMAND_READ_WRITE_CAPACITY]))
+            {
+                this._useOnDemandReadWriteCapacity = bool.Parse(config[CONFIG_ON_DEMAND_READ_WRITE_CAPACITY]);
             }
 
             if (!string.IsNullOrEmpty(config[CONFIG_STRICT_DISABLE_SESSION]))
@@ -830,13 +841,21 @@ namespace Amazon.SessionProvider
                     {
                         AttributeName = ATTRIBUTE_SESSION_ID, AttributeType = "S"
                     }
-                },
-                ProvisionedThroughput = new ProvisionedThroughput
+                }
+            };
+
+            if (this._useOnDemandReadWriteCapacity)
+            {
+                createRequest.BillingMode = BillingMode.PAY_PER_REQUEST;
+            }
+            else
+            {
+                createRequest.ProvisionedThroughput = new ProvisionedThroughput
                 {
                     ReadCapacityUnits = this._initialReadUnits,
                     WriteCapacityUnits = this._initialWriteUnits
-                }
-            };
+                };
+            }
 
             CreateTableResponse response = this._ddbClient.CreateTable(createRequest);
 
