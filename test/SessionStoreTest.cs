@@ -4,22 +4,18 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Amazon.SessionProvider;
 using Amazon.Util;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web.SessionState;
+using Xunit;
 
 namespace AWS.SessionProvider.Test
 {
-    [TestClass]
-    public class SessionStoreTest
+    public class SessionStoreTest : IDisposable
     {
         private static DynamoDBSessionStateStore store;
         private const string tableName = "SessionStore";
@@ -38,15 +34,13 @@ namespace AWS.SessionProvider.Test
             return client;
         }
 
-        [TestInitialize]
-        public void Init()
+        public SessionStoreTest()
         {
             timeoutField = typeof(DynamoDBSessionStateStore).GetField("_timeout", BindingFlags.NonPublic | BindingFlags.Instance);
-            Assert.IsNotNull(timeoutField);
+            Assert.NotNull(timeoutField);
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        public void Dispose()
         {
             using (var client = CreateClient())
             {
@@ -58,7 +52,7 @@ namespace AWS.SessionProvider.Test
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void DynamoDBSessionStateStoreTest()
         {
             var config = new NameValueCollection();
@@ -74,6 +68,7 @@ namespace AWS.SessionProvider.Test
             config.Add(DynamoDBSessionStateStore.CONFIG_TTL_EXPIRED_SESSIONS_SECONDS, ttlExpiredSessionsSeconds.ToString());
             Test(config);
         }
+
         private void Test(NameValueCollection config)
         {
             using (var client = CreateClient())
@@ -87,17 +82,17 @@ namespace AWS.SessionProvider.Test
                 var creationTime = DateTime.Now;
                 store.CreateUninitializedItem(null, sessionId, 10);
                 var items = GetAllItems(table);
-                Assert.AreEqual(1, items.Count);
+                Assert.Single(items);
                 var testTtl = config.AllKeys.Contains(DynamoDBSessionStateStore.CONFIG_TTL_ATTRIBUTE);
                 var firstItem =items[0];
-                Assert.AreEqual(testTtl, firstItem.ContainsKey(ttlAttributeName));
+                Assert.Equal(testTtl, firstItem.ContainsKey(ttlAttributeName));
                 if (testTtl)
                 {
                     var epochSeconds = firstItem[ttlAttributeName].AsInt();
-                    Assert.AreNotEqual(0, epochSeconds);
+                    Assert.NotEqual(0, epochSeconds);
                     var expiresDateTime = AWSSDKUtils.ConvertFromUnixEpochSeconds(epochSeconds);
                     var expectedExpiresDateTime = (creationTime + newTimeout).AddSeconds(ttlExpiredSessionsSeconds);
-                    Assert.IsTrue((expiresDateTime - expectedExpiresDateTime) < TimeSpan.FromMinutes(1));
+                    Assert.True((expiresDateTime - expectedExpiresDateTime) < TimeSpan.FromMinutes(1));
                 }
 
                 bool locked;
@@ -110,13 +105,13 @@ namespace AWS.SessionProvider.Test
 
                 DynamoDBSessionStateStore.DeleteExpiredSessions(client, tableName);
                 items = GetAllItems(table);
-                Assert.AreEqual(0, items.Count);
+                Assert.Empty(items);
             }
         }
 
         private static List<Document> GetAllItems(Table table)
         {
-            Assert.IsNotNull(table);
+            Assert.NotNull(table);
 
             var allItems = table.Scan(new ScanFilter()).GetRemaining().ToList();
             return allItems;
