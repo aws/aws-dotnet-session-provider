@@ -1,0 +1,7 @@
+- Add a Github Action which sets a default message that will be commented on all issues when they get closed to warn users that comments on closed issues are hard for our team to see.
+
+![comment-example](https://user-images.githubusercontent.com/23043132/94868605-5e12df80-03f8-11eb-9ea7-59572de4e0fa.png)
+
+This is an OSDS effort across all SDKs&Tools repos to address the issue of customers expecting a response from AWS when they comment on closed issues.
+
+By setting this default message we are clarifying expectations and explaining Github's limitation instead of letting users assume we are willfully ignoring them. We are giving clear directives about how to notify us and we're giving customers agency to make their own informed decisions as to whether or not they want to comment on closed issues.
