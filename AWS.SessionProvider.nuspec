@@ -6,10 +6,10 @@
     <authors>Amazon Web Services</authors>
     <description>This contains a session state provider using Amazon DynamoDB.</description>
     <language>en-US</language>
-    <license type="file">License.txt</license>
+    <licenseUrl>http://aws.amazon.com/apache2.0/</licenseUrl>
     <projectUrl>https://github.com/aws/aws-dotnet-session-provider/</projectUrl>
     <tags>AWS Amazon cloud</tags>
-    <icon>icon.png</icon>
+    <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
     <dependencies>
 	  <dependency id="AWSSDK.DynamoDBv2" version="3.5.1.9" />
     </dependencies>
@@ -21,8 +21,5 @@
     <file src=".\src\bin\net45\Release v4.5\AWS.SessionProvider.pdb" target="lib\net45" />
 
     <file src="aws-sessionprovider-sample.config" target="content" />
-    
-    <file src="License.txt" target="" />
-    <file src="icon.png" target="" />
   </files>
 </package>
