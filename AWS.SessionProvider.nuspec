@@ -6,14 +6,14 @@
     <authors>Amazon Web Services</authors>
     <description>This contains a session state provider using Amazon DynamoDB.</description>
     <language>en-US</language>
-    <!-- Remove licenseUrl when NuGet v5.3 is used-->
+    <!-- Remove licenseUrl when NuGet v5.3 is used and replace with license-->
     <licenseUrl>http://aws.amazon.com/apache2.0/</licenseUrl>
-    <license type="file">License.txt</license>
+    <!--<license type="file">License.txt</license>-->
     <projectUrl>https://github.com/aws/aws-dotnet-session-provider/</projectUrl>
     <tags>AWS Amazon cloud</tags>
-    <!-- Remove iconUrl when NuGet v5.3 is used-->
+    <!-- Remove iconUrl when NuGet v5.3 is used and replace with icon-->
     <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
-    <icon>icon.png</icon>
+    <!--<icon>icon.png</icon>-->
     <dependencies>
 	  <dependency id="AWSSDK.DynamoDBv2" version="3.5.1.9" />
     </dependencies>
