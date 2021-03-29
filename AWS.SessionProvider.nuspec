@@ -2,7 +2,7 @@
   <metadata>
     <id>AWS.SessionProvider</id>
     <title>AWS SDK for .NET: SessionProvider</title>
-    <version>4.0.0.0</version>
+    <version>4.1.0.0</version>
     <authors>Amazon Web Services</authors>
     <description>This contains a session state provider using Amazon DynamoDB.</description>
     <language>en-US</language>
@@ -11,7 +11,7 @@
     <tags>AWS Amazon cloud</tags>
     <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
     <dependencies>
-	  <dependency id="AWSSDK.DynamoDBv2" version="3.5.1.9" />
+	  <dependency id="AWSSDK.DynamoDBv2" version="3.7.0.2" />
     </dependencies>
   </metadata>
   <files>
