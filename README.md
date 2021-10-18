@@ -23,7 +23,7 @@ For more information on using the session manager, see the session manager secti
 * [AWS SDK for .NET SDK][sdk-website]
 
 
-[developer-guide]: https://docs.aws.amazon.com/sdk-for-net/v2/developer-guide/dynamodb-session-net-sdk.html
+[developer-guide]: https://docs.aws.amazon.com/sdk-for-net/v3/developer-guide/dynamodb-session-net-sdk.html
 [nuget-package]: http://www.nuget.org/packages/AWS.SessionProvider/
 [github-awssdk]: https://github.com/aws/aws-sdk-net
 [sdk-website]: http://aws.amazon.com/sdkfornet
