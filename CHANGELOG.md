@@ -1,3 +1,6 @@
+### 4.1.1.0 (2023-04-21)
+* Add option to enable On-Demand read/write capacity for session table on creation
+
 ### 4.1.0.0 (2021-03-31)
 * Update AWS SDK dependencies to 3.7
 
