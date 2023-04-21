@@ -18,7 +18,7 @@ namespace AWS.SessionProvider.Test
     public class SessionStoreTest : IDisposable
     {
         private static DynamoDBSessionStateStore store;
-        private const string tableName = "SessionStore";
+        private string tableName;
         private const string ttlAttributeName = "TTL";
         private readonly int ttlExpiredSessionsSeconds = (int)TimeSpan.FromDays(7).TotalSeconds;
         private static string sessionId = DateTime.Now.ToFileTime().ToString();
@@ -46,7 +46,7 @@ namespace AWS.SessionProvider.Test
             {
                 client.DeleteTable(new DeleteTableRequest
                 {
-                    TableName = tableName
+                    TableName = this.tableName
                 });
                 WaitUntilTableReady(client, null);
             }
@@ -57,7 +57,7 @@ namespace AWS.SessionProvider.Test
         {
             var config = new NameValueCollection();
             config.Add(DynamoDBSessionStateStore.CONFIG_REGION, region.SystemName);
-            config.Add(DynamoDBSessionStateStore.CONFIG_TABLE, tableName);
+            config.Add(DynamoDBSessionStateStore.CONFIG_TABLE, "SessionStoreWithUserSpecifiedCapacity");
             config.Add(DynamoDBSessionStateStore.CONFIG_APPLICATION, "IntegTest");
             config.Add(DynamoDBSessionStateStore.CONFIG_INITIAL_READ_UNITS, "10");
             config.Add(DynamoDBSessionStateStore.CONFIG_INITIAL_WRITE_UNITS, "10");
@@ -69,6 +69,18 @@ namespace AWS.SessionProvider.Test
             Test(config);
         }
 
+        [TestMethod]
+        public void DynamoDBOnDemandCapacityTest()
+        {
+            var config = new NameValueCollection();
+            config.Add(DynamoDBSessionStateStore.CONFIG_REGION, region.SystemName);
+            config.Add(DynamoDBSessionStateStore.CONFIG_TABLE, "SessionStoreWithOnDemandCapacity");
+            config.Add(DynamoDBSessionStateStore.CONFIG_APPLICATION, "IntegTest2");
+            config.Add(DynamoDBSessionStateStore.CONFIG_ON_DEMAND_READ_WRITE_CAPACITY, "true");
+            config.Add(DynamoDBSessionStateStore.CONFIG_CREATE_TABLE_IF_NOT_EXIST, "true");
+            Test(config);
+        }
+
         private void Test(NameValueCollection config)
         {
             using (var client = CreateClient())
@@ -76,8 +88,10 @@ namespace AWS.SessionProvider.Test
                 store = new DynamoDBSessionStateStore("TestSessionProvider", config);
                 timeoutField.SetValue(store, newTimeout);
 
+                this.tableName = config[DynamoDBSessionStateStore.CONFIG_TABLE];
+
                 WaitUntilTableReady(client, TableStatus.ACTIVE);
-                var table = Table.LoadTable(client, tableName);
+                var table = Table.LoadTable(client, this.tableName);
 
                 var creationTime = DateTime.Now;
                 store.CreateUninitializedItem(null, sessionId, 10);
@@ -93,6 +107,13 @@ namespace AWS.SessionProvider.Test
                     var expiresDateTime = AWSSDKUtils.ConvertFromUnixEpochSeconds(epochSeconds);
                     var expectedExpiresDateTime = (creationTime + newTimeout).AddSeconds(ttlExpiredSessionsSeconds);
                     Assert.True((expiresDateTime - expectedExpiresDateTime) < TimeSpan.FromMinutes(1));
+                }
+
+                var hasOnDemandReadWriteCapacity = config.AllKeys.Contains(DynamoDBSessionStateStore.CONFIG_ON_DEMAND_READ_WRITE_CAPACITY);
+                if (hasOnDemandReadWriteCapacity)
+                {
+                    var mode = client.DescribeTable(tableName).Table.BillingModeSummary.BillingMode;
+                    Assert.AreEqual(mode, BillingMode.PAY_PER_REQUEST);
                 }
 
                 bool locked;
@@ -116,7 +137,7 @@ namespace AWS.SessionProvider.Test
             var allItems = table.Scan(new ScanFilter()).GetRemaining().ToList();
             return allItems;
         }
-        private static void WaitUntilTableReady(AmazonDynamoDBClient client, TableStatus targetStatus)
+        private void WaitUntilTableReady(AmazonDynamoDBClient client, TableStatus targetStatus)
         {
             var startTime = DateTime.Now;
             TableStatus status;
