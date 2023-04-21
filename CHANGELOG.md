@@ -1,3 +1,9 @@
+### 4.1.0.0 (2021-03-31)
+* Update AWS SDK dependencies to 3.7
+
+### 4.0.0.0 (2020-11-06)
+* Update AWS SDK dependencies to 3.5, and update version to 4.0.0
+
 ### 3.3.0.0 (2017-03-10)
 * Added DynamoDB Time-to-Live support.
 

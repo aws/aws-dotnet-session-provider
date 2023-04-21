@@ -2,16 +2,20 @@
   <metadata>
     <id>AWS.SessionProvider</id>
     <title>AWS SDK for .NET: SessionProvider</title>
-    <version>3.3.0.0</version>
+    <version>4.1.0.0</version>
     <authors>Amazon Web Services</authors>
     <description>This contains a session state provider using Amazon DynamoDB.</description>
     <language>en-US</language>
+    <!-- Remove licenseUrl when NuGet v5.3 is used and replace with license-->
     <licenseUrl>http://aws.amazon.com/apache2.0/</licenseUrl>
+    <!--<license type="file">License.txt</license>-->
     <projectUrl>https://github.com/aws/aws-dotnet-session-provider/</projectUrl>
     <tags>AWS Amazon cloud</tags>
+    <!-- Remove iconUrl when NuGet v5.3 is used and replace with icon-->
     <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
+    <!--<icon>icon.png</icon>-->
     <dependencies>
-	  <dependency id="AWSSDK.DynamoDBv2" version="[3.3.4.0, 3.4)" />
+	  <dependency id="AWSSDK.DynamoDBv2" version="3.7.0.2" />
     </dependencies>
   </metadata>
   <files>
@@ -21,5 +25,8 @@
     <file src=".\src\bin\net45\Release v4.5\AWS.SessionProvider.pdb" target="lib\net45" />
 
     <file src="aws-sessionprovider-sample.config" target="content" />
+
+    <file src="License.txt" target="" />
+    <file src="icon.png" target="" />
   </files>
 </package>
