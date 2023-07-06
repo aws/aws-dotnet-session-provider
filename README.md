@@ -2,6 +2,8 @@
 
 The **Amazon DynamoDB Session State Provider** allows ASP.NET applications store their sessions inside DynamoDB. This helps applications scale across multiple application servers while maintaining session state across the system.
 
+If you are looking to cache session state in DynamoDB from an _ASP.NET Core_ application, try the [AWS .NET Distributed Cache Provider](https://github.com/awslabs/aws-dotnet-distributed-cache-provider) instead.
+
 ## Change Log
 
 The change log for the can be found in the [CHANGELOG.md](https://github.com/aws/aws-dotnet-session-provider/blob/master/CHANGELOG.md) file.
