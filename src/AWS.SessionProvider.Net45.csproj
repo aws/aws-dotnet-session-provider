@@ -20,18 +20,11 @@
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
-  <Choose>
-    <When Condition=" '$(AWSKeyFile)' == '' ">
-      <PropertyGroup>
-        <AssemblyOriginatorKeyFile>awssdk.dll.snk</AssemblyOriginatorKeyFile>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(AWSKeyFile)</AssemblyOriginatorKeyFile>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
+
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>public.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -86,7 +79,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="awssdk.dll.snk" />
+    <None Include="public.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
