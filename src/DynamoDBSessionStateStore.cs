@@ -30,6 +30,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Amazon.Runtime.Internal.Util;
 using Amazon.Util;
+using System.Reflection;
 
 namespace Amazon.SessionProvider
 {
@@ -135,6 +136,9 @@ namespace Amazon.SessionProvider
         private static readonly UpdateItemOperationConfig LOCK_UPDATE_CONFIG = new UpdateItemOperationConfig();
 
         private static readonly ILogger _logger = Logger.GetLogger(typeof(DynamoDBSessionStateStore));
+
+        private static readonly string _assemblyFileVersion = GetAssemblyFileVersion();
+        private static readonly string _userAgentSuffix = $"lib/SessionStateProvider#{_assemblyFileVersion}";
 
         static DynamoDBSessionStateStore()
         {
@@ -294,10 +298,19 @@ namespace Amazon.SessionProvider
         void DynamoDBSessionStateStore_BeforeRequestEvent(object sender, RequestEventArgs e)
         {
             Amazon.Runtime.WebServiceRequestEventArgs args = e as Amazon.Runtime.WebServiceRequestEventArgs;
-            if (args == null || !args.Headers.ContainsKey(UserAgentHeader))
+            if (args == null || !args.Headers.ContainsKey(UserAgentHeader) || args.Headers[UserAgentHeader].Contains(_userAgentSuffix))
                 return;
 
-            args.Headers[UserAgentHeader] = args.Headers[UserAgentHeader] + " SessionStateProvider";
+            args.Headers[UserAgentHeader] = args.Headers[UserAgentHeader] + " " + _userAgentSuffix;
+        }
+
+        private static string GetAssemblyFileVersion()
+        {
+            var assembly = typeof(DynamoDBSessionStateStore).GetTypeInfo().Assembly;
+            AssemblyFileVersionAttribute attribute = assembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute)) as AssemblyFileVersionAttribute;
+
+            var version = attribute == null ? "Unknown" : attribute.Version;
+            return version;
         }
 
         private void SetupTable()
