@@ -306,8 +306,8 @@ namespace Amazon.SessionProvider
 
         private static string GetAssemblyFileVersion()
         {
-            var assembly = typeof(DynamoDBSessionStateStore).GetTypeInfo().Assembly;
-            AssemblyFileVersionAttribute attribute = assembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute)) as AssemblyFileVersionAttribute;
+            var assembly = typeof(DynamoDBSessionStateStore).Assembly;
+            var attribute = assembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute)) as AssemblyFileVersionAttribute;
 
             var version = attribute == null ? "Unknown" : attribute.Version;
             return version;
