@@ -17,11 +17,9 @@ using System.IO;
 using System.Web;
 using System.Web.Configuration;
 using System.Configuration;
-using System.Configuration.Provider;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web.SessionState;
-using System.Text;
 using System.Threading;
 
 using Amazon.DynamoDBv2;
@@ -29,7 +27,6 @@ using Amazon.DynamoDBv2.Model;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Amazon.Runtime.Internal.Util;
-using Amazon.Util;
 using System.Reflection;
 
 namespace Amazon.SessionProvider
@@ -307,7 +304,7 @@ namespace Amazon.SessionProvider
         private static string GetAssemblyFileVersion()
         {
             var assembly = typeof(DynamoDBSessionStateStore).Assembly;
-            var attribute = assembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute)) as AssemblyFileVersionAttribute;
+            var attribute = (AssemblyFileVersionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute));
 
             var version = attribute == null ? "Unknown" : attribute.Version;
             return version;
