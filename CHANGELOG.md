@@ -1,3 +1,6 @@
+### 4.1.2.0 (2024-04-23)
+* Update User-Agent string
+
 ### 4.1.1.0 (2023-04-21)
 * Add option to enable On-Demand read/write capacity for session table on creation
 
